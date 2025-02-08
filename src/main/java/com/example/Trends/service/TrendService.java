@@ -4,6 +4,8 @@ import com.example.Trends.model.TrendModel;
 import com.example.Trends.util.TrendData;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,12 +15,14 @@ import java.util.List;
 @Service
 public class TrendService {
 
-    public List<TrendModel> getTrends(String filePath) {
-        Path path = FileSystems.getDefault().getPath(filePath);
-            if (!Files.exists(path)) {
+    public List<TrendModel> getTrends(String filePath) throws IOException {
+        ClassLoader classLoader = getClass().getClassLoader();
+        try (InputStream inputStream = classLoader.getResourceAsStream(filePath)) {
+            if (inputStream == null) {
                 TrendData.generateTrendData(filePath);
             }
-            return TrendData.getTrendData(filePath);
+            return TrendData.getTrendData(inputStream);
+        }
 
     }
 

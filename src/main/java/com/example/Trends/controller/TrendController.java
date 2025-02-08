@@ -21,7 +21,7 @@ public class TrendController {
     @RequestMapping(value = "/getStream7Points", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<String>> getStream7Points(@RequestParam(value = "threshold") Double threshold) throws IOException {
 
-            List<TrendModel> trendData = trendService.getTrends("src/main/resources/data/trend_data_generated.csv");
+            List<TrendModel> trendData = trendService.getTrends("data/trend_data_generated.csv");
         return ResponseEntity.status(HttpStatus.OK)
                 .body(trendService.getStream7Points(trendData, threshold));
 
@@ -30,7 +30,7 @@ public class TrendController {
     @RequestMapping(value = "/getStream8Points", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<String>> getStream8Points(@RequestParam(value = "threshold") Double threshold) throws IOException {
 
-        List<TrendModel> trendData = trendService.getTrends("src/main/resources/data/trend_data_generated.csv");
+        List<TrendModel> trendData = trendService.getTrends("data/trend_data_generated.csv");
         return ResponseEntity.status(HttpStatus.OK)
                 .body(trendService.getStream8Points(trendData, threshold));
 

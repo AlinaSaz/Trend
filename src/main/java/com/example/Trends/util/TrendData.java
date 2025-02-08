@@ -6,10 +6,8 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -43,26 +41,18 @@ public class TrendData {
             e.printStackTrace();
         }
     }
-public static List<TrendModel> getTrendData(String filePath){
+public static List<TrendModel> getTrendData(InputStream filePath) throws IOException {
     List<TrendModel> trendModelList = new ArrayList<>();
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-
-    try (Reader reader = new FileReader(filePath);
-         CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader())) {
-
-        for (CSVRecord record : csvParser) {
-            LocalDateTime timestamp = LocalDateTime.parse(record.get("Дата, время"), formatter);
-            int stream7Level = Integer.parseInt(record.get("Ручей 7: Уровень металла в кристаллизаторе, мм"));
-            int stream8Level = Integer.parseInt(record.get("Ручей 8: Уровень металла в кристаллизаторе, мм"));
-
-            TrendModel data = new TrendModel(timestamp, stream7Level, stream8Level);
-            trendModelList.add(data);
+    Reader reader = new InputStreamReader(filePath, StandardCharsets.UTF_8);
+        CSVParser parser = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader);
+        for (CSVRecord record : parser) {
+            trendModelList.add(new TrendModel(
+                    LocalDateTime.parse(record.get("Дата, время"), formatter),
+                    Integer.parseInt(record.get("Ручей 7: Уровень металла в кристаллизаторе, мм")),
+                    Integer.parseInt(record.get("Ручей 8: Уровень металла в кристаллизаторе, мм"))
+            ));
         }
-
-
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
     return trendModelList;
 }
 }
